@@ -7,8 +7,8 @@ const FILES_TO_CACHE = [
     `manifest.webmanifest`
   ];
   
-  const CACHE_NAME = `static-cache-v1`;
-  const DATA_CACHE_NAME = `data-cache-v1`;
+  const CACHE_NAME = `static-cache-v2`;
+  const DATA_CACHE_NAME = `data-cache-v2`;
 
   self.addEventListener('install', event => {
     console.log('begin installation');
@@ -27,7 +27,7 @@ const FILES_TO_CACHE = [
     event.waitUntil(
         caches.keys().then(keyList => Promise.all(
             keyList.map(key => {
-                if (key !== CACHE_NAME && kry !==DATA_CACHE_NAME) {
+                if (key !== CACHE_NAME && key !==DATA_CACHE_NAME) {
                     console.log('DESTROYING OBSOLETE FILES', key);
                     return caches.delete(key);
                 }
