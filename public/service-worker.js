@@ -1,43 +1,44 @@
-    const FILES_TO_CACHE = [
-        `/`,
-        `/index.html`,
-        `style.css`,
-        `db.js`,
-        `index.js`,
-        `manifest.webmanifest`
-    ];
-    
-    const CACHE_NAME = 'static-cache-v5';
-    const DATA_CACHE_NAME = 'data-cache-v5';
-    
-    self.addEventListener('install', event => {
-        console.log('begin install');
-        event.waitUntil(
-            caches.open(CACHE_NAME).then(cache => {
-            console.log('Your files were pre-cached successfully!');
+const FILES_TO_CACHE = [
+    `/`,
+    `/index.html`,
+    `/db.js`,
+    `index.js`,
+    `style.css`,
+    `manifest.webmanifest`
+  ];
+  
+  const CACHE_NAME = `static-cache-v2`;
+  const DATA_CACHE_NAME = `data-cache-v2`;
+
+  self.addEventListener('install', event => {
+    console.log('begin installation');
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => {
+            console.log('pre-cache successful');
             return cache.addAll(FILES_TO_CACHE);
+        })
+    );
+
+    self.skipWaiting();
+  });
+
+  self.addEventListener('activate', event => {
+    console.log('BEGIN ACTIVATION!');
+    event.waitUntil(
+        caches.keys().then(keyList => Promise.all(
+            keyList.map(key => {
+                if (key !== CACHE_NAME && key !==DATA_CACHE_NAME) {
+                    console.log('DESTROYING OBSOLETE FILES', key);
+                    return caches.delete(key);
+                }
+                return undefined;
             })
-        );
-        self.skipWaiting();
-    });
-    
-    self.addEventListener('activate', event => {
-        console.log('being activate');
-        event.waitUntil(
-            caches.keys().then(keyList => Promise.all(
-                keyList.map(key => {
-                    if (key !== CACHE_NAME && key !== DATA_CACHE_NAME){
-                        console.log('Removing old cache data', key);
-                        return caches.delete(key);
-                    }
-                    return undefined;
-                })
-            ))
-        );
-        self.clients.claim();
-    });
-    
-    self.addEventListener('fetch', event => {
+        ))
+    );
+    self.clients.claim
+  });
+
+  self.addEventListener('fetch', event => {
         console.log('begin fetch');
         if(event.request.url.includes('/api/')){
             event.respondWith(
@@ -60,3 +61,4 @@
             );
         }
     });
+    
